@@ -38,6 +38,16 @@ Install Python requirements (FastAPI with Uvicorn server and ScyllaDB driver):
 pip install fastapi "uvicorn[standard]" scylla-driver
 ```
 
+Modify `config.py` to match your database credentials:
+
+```python
+HOST="node-0.aws-us-east-1.xxxx.clusters.scylla.cloud"
+USER="scylla"
+PASSWORD="xxxxxx"
+DATACENTER="AWS_US_EAST_1"
+KEYSPACE="ecommerce"
+```
+
 Run the server:
 ```
 uvicorn main:app --reload
