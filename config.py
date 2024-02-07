@@ -1,0 +1,5 @@
+HOST="172.17.0.2"
+USER=""
+PASSWORD=""
+DATACENTER="datacenter1"
+KEYSPACE="ecommerce"
