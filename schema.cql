@@ -8,17 +8,18 @@ CREATE TABLE ecommerce.product (
     PRIMARY KEY (id)
 );
 
-
-CREATE TABLE ecommerce.active_cart (
+CREATE TABLE ecommerce.cart (
     user_id TEXT,
-    products set<UUID>,
-    PRIMARY KEY (user_id)
+    cart_id UUID,
+    is_active BOOLEAN,
+    PRIMARY KEY (user_id, cart_id)
+);
+CREATE INDEX cart_is_active ON cart (is_active);
+
+CREATE TABLE ecommerce.cart_items (
+    user_id TEXT,
+    cart_id UUID,
+    product_id UUID,
+    product_quantity INT,
+    PRIMARY KEY (user_id, cart_id, product_id)
 ) WITH cdc = {'enabled': true};
-
-
-CREATE TABLE ecommerce.orders (
-    user_id TEXT,
-    created_at TIMESTAMP,
-    products set<UUID>,
-    PRIMARY KEY (user_id, created_at)
-) WITH CLUSTERING ORDER BY (created_at DESC);
