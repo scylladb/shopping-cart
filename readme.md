@@ -1,5 +1,5 @@
 # Ecommerce API - ScyllaDB & FastAPI sample application
-This is a sample ecommerce application built with ScyllaDB and FastAPI.
+This is a sample ecommerce application built with [ScyllaDB](https://www.scylladb.com/) and [FastAPI](https://fastapi.tiangolo.com/).
 
 
 ## Prerequisites
@@ -21,7 +21,6 @@ cd shopping-cart
 Connect to your ScyllaDB Cloud cluster using CQLSH and create the schema:
 
 ```
-cqlsh -u scylla -p 'my_password' 
 cqlsh -u scylla -p <YOUR_PASSWORD> -f schema.cql xxxx.xxxx.xxxx.clusters.scylla.cloud
 ```
 
