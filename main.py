@@ -19,6 +19,11 @@ class Product(BaseModel):
 
 class CartItem(BaseModel):
     product_id: str
+    quantity: int = None
+    
+
+def fetch_active_cart(user_id):
+    return client.execute("SELECT * FROM cart WHERE user_id = %s AND is_active = true;", [user_id]).one()
     
 
 @app.get("/", tags=["home"])
@@ -40,37 +45,36 @@ def product(product_id):
 
 @app.get("/cart/{user_id}", tags=["cart"])
 def cart(user_id):
-    query = "SELECT * FROM active_cart WHERE user_id = %s;"
-    return client.execute(query, [user_id]).all()
+    active_cart = fetch_active_cart(user_id)
+    if active_cart is None:
+        raise HTTPException(status_code=404, detail="No items found in cart")
+    query = "SELECT * FROM cart_items WHERE user_id = %s AND cart_id = %s;"
+    return client.execute(query, [user_id, active_cart["cart_id"]]).all()
 
 
 @app.post("/cart/{user_id}", tags=["cart"])
 def add_to_cart(user_id, cart_item: CartItem):
-    existing_cart = client.execute("SELECT * FROM active_cart WHERE user_id = %s", [user_id]).one()
-    if existing_cart is None: # there's no cart created yet, create one
-        query = "INSERT INTO active_cart (user_id, products) VALUES (%s, %s)"
-        values = [user_id, set([uuid.UUID(cart_item.product_id)])]
-        return client.execute(query, values)
-    else: # there's already a cart, update it
-        query = "UPDATE active_cart SET products= products + %s WHERE user_id = %s"
-        values = [set([uuid.UUID(cart_item.product_id)]), user_id]
-        return client.execute(query, values)
+    active_cart = fetch_active_cart(user_id)
+    if active_cart is None: # no active cart, create a new one
+        active_cart_id = uuid.uuid4()
+        client.execute("INSERT INTO cart(user_id, cart_id, is_active) VALUES (%s, %s, true)", [user_id, active_cart_id])
+    else: # use existing cart
+        active_cart_id = active_cart["cart_id"]
+    
+    # add the product to cart  
+    query = "INSERT INTO cart_items (user_id, cart_id, product_id, product_quantity) VALUES (%s, %s, %s, %s)"
+    values = [user_id, active_cart_id, uuid.UUID(cart_item.product_id), cart_item.quantity]
+    return client.execute(query, values)
 
 
 @app.delete("/cart/{user_id}", tags=["cart"])
 def delete_from_cart(user_id, cart_item: CartItem):
-    cart = client.execute("SELECT products FROM active_cart WHERE user_id = %s", [user_id]).one()
-    if cart is None:
-        raise HTTPException(status_code=404, detail="Item not found in cart")
-    cart_items = cart["products"]
-    product_id = uuid.UUID(cart_item.product_id)
-    if product_id in cart_items:
-        if len(cart_items) == 1:
-            return client.execute("DELETE FROM active_cart WHERE user_id = %s", [user_id])
-        else:
-            cart_items.remove(product_id)
-            return client.execute("UPDATE active_cart SET products=%s WHERE user_id = %s", [cart_items, user_id])
-        
+    active_cart = fetch_active_cart(user_id)
+    if active_cart is None:
+        raise HTTPException(status_code=404, detail="No items found in cart")
+    query = "DELETE FROM cart_items WHERE user_id = %s AND cart_id = %s AND product_id = %s"
+    return client.execute(query,
+                          [user_id, active_cart["cart_id"], uuid.UUID(cart_item.product_id)])      
 
 
 @app.post("/products", tags=["products"])
@@ -82,8 +86,7 @@ def upload_product(product: Product):
 
 @app.put("/products/{product_id}", tags=["products"])
 def update_product(product: Product, product_id):
-    body = product.model_dump()
-    values = [body["name"], body["price"], body["img"], uuid.UUID(product_id)]
+    values = [product.name, product.price, product.img, uuid.UUID(product_id)]
     query = "UPDATE product SET name=%s, price=%s, img=%s WHERE id = %s"
     return client.execute(query, values)
 
@@ -96,20 +99,8 @@ def delete_product(product_id):
 
 @app.post("/cart/{user_id}/checkout", tags=["cart"])
 def checkout(user_id):
-    # insert into orders table
-    cart = client.execute("SELECT products FROM active_cart WHERE user_id = %s", [user_id]).one()
-    if cart is None:
-        raise HTTPException(status_code=404, detail="User's cart is empty")
-    cart_items = cart["products"]
-    query = "INSERT INTO orders (user_id, created_at, products) VALUES (%s, toTimestamp(now()), %s)"
-    client.execute(query, [user_id, cart_items])
-    
-    # delete active cart
-    client.execute("DELETE FROM active_cart WHERE user_id = %s", [user_id])
-
-
-
-@app.get("/orders/{user_id}", tags=["orders"])
-def orders(user_id):
-    query = "SELECT * FROM orders WHERE user_id = %s;"
-    return client.execute(query, [user_id]).all()
+    active_cart = fetch_active_cart(user_id)
+    if active_cart is None:
+        raise HTTPException(status_code=404, detail="User does not have an active cart")
+    query = "UPDATE cart SET is_active = false WHERE user_id = %s AND cart_id = %s"
+    return client.execute(query, [user_id, active_cart["cart_id"]])
