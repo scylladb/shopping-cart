@@ -14,7 +14,7 @@ CREATE TABLE ecommerce.cart (
     is_active BOOLEAN,
     PRIMARY KEY (user_id, cart_id)
 );
-CREATE INDEX cart_is_active ON cart (user_id, is_active);
+CREATE INDEX cart_is_active ON cart ((user_id), is_active);
 
 CREATE TABLE ecommerce.cart_items (
     user_id TEXT,
