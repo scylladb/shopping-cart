@@ -1,2 +1,4 @@
 /__pycache__
 /env
+docs/poetry.lock
+docs/_build
