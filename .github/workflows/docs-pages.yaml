@@ -19,21 +19,16 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-
+          python-version: '3.10'
       - name: Set up env
         run: make -C docs setupenv
-
       - name: Build docs
         run: make -C docs multiversion
-
       - name: Build redirects
         run: make -C docs redirects
-
       - name: Tar folder
         run: |
           tar \
@@ -41,7 +36,6 @@ jobs:
             --directory docs/_build/dirhtml/ \
             -cvf ${{ runner.temp }}/artifact.tar \
             .
-
       - name: Upload artifact
         uses: actions/upload-artifact@main
         with:
