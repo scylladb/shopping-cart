@@ -106,9 +106,9 @@ html_theme_options = {
     "conf_py_path": "docs/source/",
     "hide_edit_this_page_button": "false",
     "hide_feedback_buttons": "false",
-    "github_issues_repository": "scylladb/video-streaming",
-    "github_repository": "scylladb/video-streaming",
-    "site_description": "ScyllaDB video streaming sample app",
+    "github_issues_repository": "scylladb/shopping-cart",
+    "github_repository": "scylladb/shopping-cart",
+    "site_description": "ScyllaDB shopping cart sample app",
     "hide_version_dropdown": ["main"],
     "versions_unstable": UNSTABLE_VERSIONS,
     "versions_deprecated": DEPRECATED_VERSIONS,
@@ -124,7 +124,7 @@ html_sidebars = {"**": ["side-nav.html"]}
 htmlhelp_basename = "ScyllaDocumentationdoc"
 
 # URL which points to the root of the HTML documentation.
-html_baseurl = "https://video-streaming.scylladb.com"
+html_baseurl = "https://shopping-cart.scylladb.com/"
 
 # Dictionary of values to pass into the template engine’s context for all pages
 html_context = {"html_baseurl": html_baseurl}
