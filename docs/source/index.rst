@@ -11,9 +11,9 @@
 .. hero-box::
   :title: Build a shopping cart app with ScyllaDB
   :image: /_static/img/scylladb-shopping.png
-  :button_icon: fa fa-github
+  :button_icon: icon-github
   :button_url: https://github.com/scylladb/shopping-cart
-  :button_text: GitHub repository
+  :button_text: Source code
 
   Sample ecommerce shopping cart API with ScyllaDB and FastAPI.
 
@@ -31,7 +31,7 @@
 .. topic-box::
   :title: Getting started
   :link: getting-started
-  :icon: scylla-icon scylla-icon--getting-started
+  :icon: icon-docs-getting-started
   :class: large-4
   :anchor: Get started
 
@@ -40,7 +40,7 @@
 .. topic-box::
   :title: Data model
   :link: data-model
-  :icon: scylla-icon scylla-icon--circe
+  :icon: icon-docs-alternator
   :class: large-4
   :anchor: Learn more
 
@@ -49,7 +49,7 @@
 .. topic-box::
   :title: Hands-on tutorial
   :link: hands-on
-  :icon: scylla-icon scylla-icon--circe
+  :icon: icon-docs-blog
   :class: large-4
   :anchor: Run the app
 
