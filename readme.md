@@ -34,7 +34,7 @@ source env/bin/activate
 
 Install Python requirements (FastAPI with Uvicorn server and ScyllaDB driver):
 ```
-pip install fastapi "uvicorn[standard]" scylla-driver
+pip install fastapi "uvicorn[standard]" scylla-driver requests
 ```
 
 Modify `config.py` to match your database credentials:
