@@ -12,6 +12,7 @@ app = FastAPI(
 client = ScyllaClient(config).get_session()
 
 class Product(BaseModel):
+    id: str
     name: str
     price: float
     img: str
@@ -79,8 +80,9 @@ def delete_from_cart(user_id, cart_item: CartItem):
 
 @app.post("/products", tags=["products"])
 def upload_product(product: Product):
-    query = "INSERT INTO product (id, name, price, img) VALUES (uuid(), %s, %s, %s)"
+    query = "INSERT INTO product (id, name, price, img) VALUES (%s, %s, %s, %s)"
     values = list(product.model_dump().values())
+    values[0] = uuid.UUID(values[0])
     return client.execute(query, values)
 
 
