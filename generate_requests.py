@@ -5,46 +5,37 @@ import time
 
 BASE_URL = "http://127.0.0.1:8000"
 
-
-def upload_random_product():
-    product_data = {
-        "id": str(uuid.uuid4()),
-        "name": f"Product {uuid.uuid4().hex[:8]}",
-        "price": round(random.uniform(10.0, 100.0), 2),
-        "img": "https://example.com/image.jpg",
-    }
-    response = requests.post(f"{BASE_URL}/products", json=product_data)
-    print(f"New product: {product_data['name']}")
-    return product_data["id"]
-
-
 def add_to_cart(user_id, product_id):
     cart_item_data = {"product_id": str(product_id), "quantity": random.randint(1, 5)}
     response = requests.post(f"{BASE_URL}/cart/{user_id}", json=cart_item_data)
-    print(f"Added to cart: {product_id} ")
 
 
 def checkout(user_id):
     response = requests.post(f"{BASE_URL}/cart/{user_id}/checkout")
-    print(f"User({user_id}) checkout completed! \n-----")
 
 
 def main():
     user_id = uuid.uuid4()
     cart_products = []
-
+    product_ids = [ product["id"] for product in requests.get(f"{BASE_URL}/products?limit=50").json()]
+    
+    print(f"Shopping started - User({user_id}) ")
+    count = 0
     while True:
-        product_id = upload_random_product()
+        random_id = product_ids[random.randint(0,49)]
+        if random_id not in cart_products:
+            add_to_cart(user_id, random_id)
+            cart_products.append(random_id)
+            count += 1
+            print(f"({count}) Added to cart: {random_id} ")
+            
 
-        # Add 50% of the products to the cart
-        if random.choice([True, False]):
-            add_to_cart(user_id, product_id)
-            cart_products.append(product_id)
-
-        # Checkout randomly if there is 3-4 products in the cart
-        if len(cart_products) >= random.randint(3, 5):
+        # Checkout randomly if there is 2-6 products in the cart
+        if len(cart_products) >= random.randint(2, 6):
             checkout(user_id)
             cart_products = []
+            print(f"Checkout completed ({count} items)! \n-----")
+            count = 0
 
         time.sleep(1)
 
