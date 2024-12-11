@@ -102,21 +102,52 @@ Generate user interactions (adding products to cart, checkout):
 Change Data Capture (CDC) is a ScyllaDB feature that records every change (insert, update, delete) that happens in your table. CDC provides real-time and historical insights into user behavior, product performance, and activity. 
 
 
-Here are some example CDC queries that can be useful for an ecommerce application:
+Here are some example CDC queries that can provide insights into user behaviour:
 
-**How many times do users add more than 2 of the same product to the cart?**
+**How many times did users add more than 2 of the same product to the cart?**
 ```sql
-SELECT count(*) 
-FROM ecommerce.cart_items_scylla_cdc_log 
+SELECT count(*), toTimestamp(min("cdc$time")) AS "from", toTimestamp(max("cdc$time")) AS "to"
+FROM ecommerce.cart_items_scylla_cdc_log
 WHERE "cdc$operation"= 2 AND product_quantity > 2
 ALLOW FILTERING;
 ```
 
 **How many carts contain a particular product?**
 ```sql
+SELECT count(*), toTimestamp(min("cdc$time")) AS "from", toTimestamp(max("cdc$time")) AS "to"
 FROM ecommerce.cart_items_scylla_cdc_log
-WHERE "cdc$operation"= 2 AND product_id = dc87a43f-53b2-48a2-9003-2654345b6647
+WHERE product_id = <PRODUCT_ID> AND "cdc$operation" = 2
 ALLOW FILTERING;
 ```
 
 Notice how in both cases we put `"cdc$operation"= 2` in the where clause. This is because if the operation is `2` that means it was an `INSERT` operation. Learn more about [ScyllaDB CDC](https://opensource.docs.scylladb.com/stable/features/cdc/cdc-intro.html).
+
+Now, running analytical queries on the CDC table requires you to use `ALLOW FILTERING`. This can caouse unpredictable performance at larger scale use cases. In order to query CDC log data in highly scalable way, use our integration with Kafka. Using The [ScyllaDB CDC Kafka source connector](https://github.com/scylladb/scylla-cdc-source-connector), you can easily extract data from ScyllaDB and push it into an external service like ElasticSearch for further analytics.
+
+## Push ScyllaDB CDC data into Kafka
+Run the Kafka Connect container:
+```
+cd kafka
+docker compose up -d
+```
+
+This will start up several Docker services needed to run Kafka Connect and the Confluent Control Center.
+
+In case you have an existing Kafka Connect service running, install the ScyllaDB source connector:
+```
+confluent-hub install --no-prompt scylladb/scylla-cdc-source-connector:latest
+```
+
+In the Kafka Control Center, use these parameters to create a new ScyllaDB connection:
+```
+Add a new ScyllaDB connection with these parameters:
+- Name: ScyllaDBConnector
+- Key converter class, value converter class: `org.apache.kafka.connect.json.JsonConverter`
+- Hosts: ScyllaDB_ADDRESS:9042
+- Namespace: ScyllaDBConnectorNamespace
+- Table names: ecommerce.cart_items
+```
+
+For `ScyllaDB_ADDRESS`, use either the Docker container's address or the ScyllaDB Cloud address depending on where you host your ScyllaDB.
+
+Click launch and the connection should be created successfully.
