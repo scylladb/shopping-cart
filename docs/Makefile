@@ -26,7 +26,7 @@ setup:
 	$(POETRY) install
 
 .PHONY: update
-setup:
+update:
 	$(POETRY) update
 
 # Clean commands
