@@ -777,13 +777,14 @@ rtd = ["ipython", "myst-nb", "sphinx", "sphinx-book-theme", "sphinx-examples"]
 
 [[package]]
 name = "sphinx-multiversion-scylla"
-version = "0.3.2"
+version = "0.3.5"
 description = "Add support for multiple versions to sphinx"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "sphinx_multiversion_scylla-0.3.2.tar.gz", hash = "sha256:f415311273228f4f766c36256503da8e2ce01f9d13423f3fcee3160d6284852b"},
+    {file = "sphinx_multiversion_scylla-0.3.5-py3-none-any.whl", hash = "sha256:ef2ea652632698a3d1e228b8f1f0dae6c13c0e34f54d46bb2b2d5a1cde9e6e95"},
+    {file = "sphinx_multiversion_scylla-0.3.5.tar.gz", hash = "sha256:babae99a8a01201c87ef649cc58485da9910e5e8ca245f97e81281b3eee94db8"},
 ]
 
 [package.dependencies]
@@ -1305,4 +1306,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "ab3742d50f77c489252471e6a7656dbcebfc7881ea82968e735c0e3d09143085"
+content-hash = "6cb2da996bcf21b03e761d95b54ace1ee0fac0298df1b8c4f42bda9f3ce57637"
