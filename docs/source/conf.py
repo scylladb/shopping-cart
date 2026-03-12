@@ -34,7 +34,7 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_scylladb_theme",
     "sphinx_multiversion",  # optional
-    "recommonmark",  # optional
+    "myst_parser",  # optional
 ]
 
 # The suffix(es) of source filenames.
@@ -50,7 +50,7 @@ author = u"ScyllaDB Project Contributors"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
@@ -95,7 +95,7 @@ smv_outputdir_format = "{ref.name}"
 html_theme = "sphinx_scylladb_theme"
 html_theme_path = ["../.."]
 
-# A list of paths that contain custom static files. 
+# A list of paths that contain custom static files.
 # They are copied to the output’s _static directory.
 html_static_path = ["_static"]
 
