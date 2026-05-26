@@ -3,7 +3,7 @@ This is a sample ecommerce application built with [ScyllaDB](https://www.scyllad
 
 
 ## Prerequisites
-* [CQLSH](https://cassandra.apache.org/doc/stable/cassandra/tools/cqlsh.html)
+* [CQLSH](https://docs.scylladb.com/manual/stable/cql/cqlsh.html)
 * Python 3
 * [ScyllaDB Cloud account](https://cloud.scylladb.com)
 
